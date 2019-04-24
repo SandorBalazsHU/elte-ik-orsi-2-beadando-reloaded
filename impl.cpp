@@ -291,6 +291,7 @@ bool coordinate_y_order(const Coordinate& a, const Coordinate& b)
 	return a.y < b.y;
 }
 
+// TODO: Rendezés ellenőrzése
 FlightPath Map::get_shortest_flightpath() const
 {
 	std::vector<City> x,y;
@@ -300,12 +301,33 @@ FlightPath Map::get_shortest_flightpath() const
 	return find_shortest(x,y);
 }
 
-
-
-
-
-
+// TODO: Felezés ellenőrzése + Páratlan esetben kerüljön a jobb oldalhoz a plusz elem!
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
-	return closest_brute_force(x_cities);
+	if(x_cities.size()>4) return closest_brute_force(x_cities);
+
+	std::size_t const half_size = x_cities.size() / 2;
+	std::vector<City> on_left_x(x_cities.begin(), x_cities.begin() + half_size-1);
+	std::vector<City> on_right_x(x_cities.begin() + half_size, x_cities.end());
+
+	City middle_X = on_right_x[0];
+
+	std::vector<City> on_left_y, on_right_y;
+	for (size_t i = 0; i < y_cities.size(); i++)
+	{
+		if(y_cities[i].x<=middle_X.x)
+		{
+			on_left_y.push_back(y_cities[i]);
+		}
+		else
+		{
+			on_right_y.push_back(y_cities[i]);
+		}
+	}
+
+	FlightPath path_a = find_shortest(on_left_x, on_left_y);
+	FlightPath path_b = find_shortest(on_right_x, on_right_y); //Külön szálon!
+
+	FlightPath min_path = (get_length(path_a)<get_length(path_b)) ? path_a : path_b;
+	
 }
