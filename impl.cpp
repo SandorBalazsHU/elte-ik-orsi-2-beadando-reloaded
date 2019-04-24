@@ -168,13 +168,14 @@ Tile Map::tile_at(const int i, const int j) const
 	}
 }
 
+/* @deprecated 
 void Map::set_tile(const int i, const int j, const FIELD f)
 {
 	if (in_range(i, j))
 	{
 		map_[i][j] = f;
 	}
-}
+}*/
 
 Tile Map::tile_in_direction(int x, int y, const DIRECTION d) const
 {
@@ -198,7 +199,6 @@ Tile Map::tile_in_direction(int x, int y, const DIRECTION d) const
 	}
 }
 
-// Halmazbővítéses megoldás
 std::set<Tile> Map::get_tiles_in_radius(const int i, const int j, const int r) const
 {
 	std::set<Tile> s;
@@ -240,6 +240,34 @@ void Map::find_cities()
 	}
 }
 
+std::set<City> Map::get_cities() const
+{
+	return cities_;
+}
+
+void Map::set_tile(const int i, const int j, const FIELD f)
+{
+	if (in_range(i, j))
+	{
+		Tile current_tile = tile_at(i,j);
+		if(current_tile.second == FIELD::CITY && f != FIELD::CITY)
+		{
+			cities_.erase(current_tile.first);
+		}
+		else
+		{
+			cities_.insert(current_tile.first);
+		}
+		map_[i][j] = f;
+	}
+}
+
+
+
+
+
+
+
 double Map::get_length(const FlightPath& p) const
 {
 	return 0.0;
@@ -260,10 +288,6 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 	return brute_force(x_cities);
 }
 
-std::set<City> Map::get_cities() const
-{
-	return cities_;
-}
 
 FlightPath Map::get_shortest_flightpath() const
 {	
