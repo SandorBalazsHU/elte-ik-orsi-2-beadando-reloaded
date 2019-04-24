@@ -262,26 +262,42 @@ void Map::set_tile(const int i, const int j, const FIELD f)
 	}
 }
 
-
-
-
-
-
-
 double Map::get_length(const FlightPath& p) const
 {
-	return 0.0;
+	return (double) get_distance(p.first, p.second);
 }
 
 double Map::get_distance(const City& a, const City& b) const
 {
-	return 0.0;
+	return (double) std::sqrt(std::pow(a.x-b.x, 2)+std::pow(a.y-b.y, 2));;
 }
 
 FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 {
-	return {{0,0}, {0,0}};	
+	std::pair<std::pair<City, City>, double> closest;
+	closest.second = 0.0;
+	for(size_t i = 0; i < cities.size(); i++)
+	{
+		for(size_t j = 0; j < cities.size(); j++)
+		{
+			double d = get_distance(cities[i], cities[j]);
+			if(d >= closest.second)
+			{
+				closest.first.first = cities[i];
+				closest.first.second = cities[j];
+				closest.second = d;
+			}
+		}
+		
+	}
+	return std::pair(closest.first.first, closest.first.second);
 }
+
+
+
+
+
+
 
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
