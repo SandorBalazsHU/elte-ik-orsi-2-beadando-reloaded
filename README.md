@@ -59,23 +59,23 @@ A kapott út kiindulási városa legyen az, melynek pozíciója “kisebb” a m
 
 ##### Segítség a fenti térkép indexeléséhez:
 <p align="center">
-  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-1-beadando-reloaded/raw/master/img/map_sample.jpg">
+  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-2-beadando-reloaded/raw/master/img/map_sample.jpg">
 </p>
 
 ##### Irányok:
 <p align="center">
-  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-1-beadando-reloaded/raw/master/img/directions.gif">
+  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-2-beadando-reloaded/raw/master/img/directions.gif">
 </p>
 
 ##### A térkép érdemleges részének indexelési módja
 <p align="center">
-  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-1-beadando-reloaded/raw/master/img/map_indexing.jpg">
+  <img src="https://github.com/SandorBalazsHU/elte-ik-orsi-2-beadando-reloaded/raw/master/img/map_indexing.jpg">
 </p>
 
 
 ## Az implementációs feladat
 
-A feladat megoldásához kiindulásnak [innen](https://github.com/SandorBalazsHU/elte-ik-orsi-1-beadando-reloaded/raw/master/kiindulas.zip) tudtok letölteni egy ZIP állományt. Ebben három fájlt találtok - egy types.hpp és egy impl.cpp nevű fájlt.
+A feladat megoldásához kiindulásnak [innen](https://github.com/SandorBalazsHU/elte-ik-orsi-2-beadando-reloaded/raw/master/kiindulas.zip) tudtok letölteni egy ZIP állományt. Ebben három fájlt találtok - egy types.hpp és egy impl.cpp nevű fájlt.
 
 A types.hpp fájlnak tartalmán nem kell változtatni - ezt csupán érdemes nagyjából átnézni, hogy mi minden található benne - a lentebbi segítségben található metódusok és osztályok prototípusát / definícióját tartalmazza.
 
