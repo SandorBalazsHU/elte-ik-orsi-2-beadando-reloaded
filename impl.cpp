@@ -1,5 +1,6 @@
 #include "types.hpp"
 #include <iostream>
+#include <algorithm>
 
 
 FIELD field_from_int(const int i)
@@ -37,7 +38,6 @@ bool operator<(const Coordinate& a, const Coordinate& b)
 	if (a.x == b.x) return a.y < b.y;
 	return a.x < b.x;
 }
-
 
 std::ostream& operator<<(std::ostream& s, const FIELD& f)
 {
@@ -168,15 +168,6 @@ Tile Map::tile_at(const int i, const int j) const
 	}
 }
 
-/* @deprecated 
-void Map::set_tile(const int i, const int j, const FIELD f)
-{
-	if (in_range(i, j))
-	{
-		map_[i][j] = f;
-	}
-}*/
-
 Tile Map::tile_in_direction(int x, int y, const DIRECTION d) const
 {
 	int even_shift = 1;
@@ -293,6 +284,20 @@ FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 	return std::pair(closest.first.first, closest.first.second);
 }
 
+bool coordinate_y_order(const Coordinate& a, const Coordinate& b)
+{
+	if (a.y == b.y) return a.x < b.x;
+	return a.y < b.y;
+}
+
+FlightPath Map::get_shortest_flightpath() const
+{
+	std::vector<City> x,y;
+	std::copy(cities_.begin(), cities_.end(), std::back_inserter(x));
+	y=x;
+	std::sort(y.begin, y.end, coordinate_y_order);
+	return find_shortest(x,y);
+}
 
 
 
@@ -301,12 +306,5 @@ FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
-	return brute_force(x_cities);
-}
-
-
-FlightPath Map::get_shortest_flightpath() const
-{	
-	std::vector<City> v;
-	return find_shortest(v, v);
+	return closest_brute_force(x_cities);
 }
