@@ -1,4 +1,4 @@
-#ifndef TYPES_HPP
+﻿#ifndef TYPES_HPP
 #define TYPES_HPP
 
 #include <array>
@@ -156,6 +156,7 @@ public:
     std::set<Tile> get_tiles_in_radius(const int i, const int j, const int r) const;
     
     friend std::istream& operator>>(std::istream& s, Map& m);
+    friend std::ostream& operator<<(std::ostream& s, const Map& m);
 };
 
 

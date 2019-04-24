@@ -1,6 +1,7 @@
-#include "types.hpp"
+﻿#include "types.hpp"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 
 FIELD field_from_int(const int i)
@@ -281,7 +282,7 @@ FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 		}
 		
 	}
-	return std::pair(closest.first.first, closest.first.second);
+	return std::pair<City, City>(closest.first.first, closest.first.second);
 }
 
 bool coordinate_y_order(const Coordinate& a, const Coordinate& b)
@@ -295,7 +296,7 @@ FlightPath Map::get_shortest_flightpath() const
 	std::vector<City> x,y;
 	std::copy(cities_.begin(), cities_.end(), std::back_inserter(x));
 	y=x;
-	std::sort(y.begin, y.end, coordinate_y_order);
+	std::sort(y.begin(), y.end(), coordinate_y_order);
 	return find_shortest(x,y);
 }
 
