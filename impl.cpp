@@ -302,6 +302,14 @@ FlightPath Map::get_shortest_flightpath() const
 }
 
 // TODO: Felezés ellenőrzése + Páratlan esetben kerüljön a jobb oldalhoz a plusz elem!
+/* TODO : WTF???
+ * A kettő közül a kisebb távolságú utat jelölje min_path.
+ * Jó esetben ez jelöli a legkisebb távolságot számunkra (a két, fele akkora részekből számítva),
+ * ám lehetséges, hogy a végeredmény szempontjából kedvező eset egyik eleme a bal rész jobb szélén,
+ * a másik fele a jobb rész bal szélén található, amit a rekurzió pont félbe vágott.
+ * Emiatt meg kell még vizsgálni, hogy van e olyan páros,
+ * amik ide esnek és a távolságuk is kedvező számunkra.
+*/
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
 	if(x_cities.size()>4) return closest_brute_force(x_cities);
@@ -329,5 +337,16 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 	FlightPath path_b = find_shortest(on_right_x, on_right_y); //Külön szálon!
 
 	FlightPath min_path = (get_length(path_a)<get_length(path_b)) ? path_a : path_b;
+
+	std::vector<City> stripe;
+	for (size_t i = 0; i < y_cities.size(); i++)
+	{
+		if(y_cities[i].x<)
+		{
+		stripe.push_back(y_cities[i]);
+		}
+
+	}
 	
+	return min_path;
 }
