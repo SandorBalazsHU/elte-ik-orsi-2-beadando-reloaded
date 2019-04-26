@@ -309,7 +309,7 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 {
 	if(x_cities.size() < 4) return closest_brute_force(x_cities);
 
-	std::size_t const half_size = x_cities.size() / 2;	//Páros páratlan
+	std::size_t const half_size = x_cities.size() / 2;
 	std::size_t const left_shift = (x_cities.size() % 2 == 0) ? half_size-1 : half_size;
 	std::size_t const right_shift = (x_cities.size() % 2 == 0) ? half_size : (half_size-1);
 
