@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <future>
 
 
 FIELD field_from_int(const int i)
@@ -272,15 +273,17 @@ FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 	{
 		for(size_t j = 0; j < cities.size(); j++)
 		{
-			double d = get_distance(cities[i], cities[j]);
-			if(d >= closest.second)
+			if(i != j)
 			{
-				closest.first.first = cities[i];
-				closest.first.second = cities[j];
-				closest.second = d;
+				double d = get_distance(cities[i], cities[j]);
+				if(d >= closest.second)
+				{
+					closest.first.first = cities[i];
+					closest.first.second = cities[j];
+					closest.second = d;
+				}
 			}
 		}
-		
 	}
 	return std::pair<City, City>(closest.first.first, closest.first.second);
 }
@@ -301,24 +304,19 @@ FlightPath Map::get_shortest_flightpath() const
 	return find_shortest(x,y);
 }
 
-// TODO: Felezés ellenőrzése + Páratlan esetben kerüljön a jobb oldalhoz a plusz elem!
-/* TODO : WTF???
- * A kettő közül a kisebb távolságú utat jelölje min_path.
- * Jó esetben ez jelöli a legkisebb távolságot számunkra (a két, fele akkora részekből számítva),
- * ám lehetséges, hogy a végeredmény szempontjából kedvező eset egyik eleme a bal rész jobb szélén,
- * a másik fele a jobb rész bal szélén található, amit a rekurzió pont félbe vágott.
- * Emiatt meg kell még vizsgálni, hogy van e olyan páros,
- * amik ide esnek és a távolságuk is kedvező számunkra.
-*/
+// TODO: Működés ellenőrzése
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
-	if(x_cities.size()>4) return closest_brute_force(x_cities);
+	if(x_cities.size() < 4) return closest_brute_force(x_cities);
 
-	std::size_t const half_size = x_cities.size() / 2;
-	std::vector<City> on_left_x(x_cities.begin(), x_cities.begin() + half_size-1);
-	std::vector<City> on_right_x(x_cities.begin() + half_size, x_cities.end());
+	std::size_t const half_size = x_cities.size() / 2;	//Páros páratlan
+	std::size_t const left_shift = (x_cities.size() % 2 == 0) ? half_size-1 : half_size;
+	std::size_t const right_shift = (x_cities.size() % 2 == 0) ? half_size : (half_size-1);
 
-	City middle_X = on_right_x[0];
+	std::vector<City> const on_left_x(x_cities.begin(), x_cities.begin() + half_size-1);
+	std::vector<City> const on_right_x(x_cities.begin() + half_size, x_cities.end());
+
+	City const middle_X = on_right_x[0];
 
 	std::vector<City> on_left_y, on_right_y;
 	for (size_t i = 0; i < y_cities.size(); i++)
@@ -333,19 +331,36 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 		}
 	}
 
-	FlightPath path_a = find_shortest(on_left_x, on_left_y);
-	FlightPath path_b = find_shortest(on_right_x, on_right_y); //Külön szálon!
+	FlightPath const path_a = find_shortest(on_left_x, on_left_y);
+	std::future<FlightPath> path_b_future = std::async( std::launch::async, &Map::find_shortest, this, std::cref(on_right_x), std::cref(on_right_y) );
+	FlightPath const path_b = path_b_future.get();
 
-	FlightPath min_path = (get_length(path_a)<get_length(path_b)) ? path_a : path_b;
+	FlightPath min_path = (get_length(path_a) < get_length(path_b)) ? path_a : path_b;
 
 	std::vector<City> stripe;
 	for (size_t i = 0; i < y_cities.size(); i++)
 	{
-		if(y_cities[i].x<)
+		if(std::abs(y_cities[i].x-middle_X.x) < get_length(min_path))
 		{
-		stripe.push_back(y_cities[i]);
+			stripe.push_back(y_cities[i]);
 		}
 
+	}
+	if(stripe.size()>2)
+	{
+		FlightPath const new_min_path = closest_brute_force(stripe);
+		if(get_length(new_min_path) < get_length(min_path)) min_path = new_min_path;
+	}
+	else
+	{
+		if (stripe.size()==2)
+		{
+			std::pair<City, City> new_min_path;
+			new_min_path.first = stripe[0];
+			new_min_path.second = stripe[0];
+			if(get_length(new_min_path) < get_length(min_path)) min_path = new_min_path;
+		}
+		
 	}
 	
 	return min_path;
