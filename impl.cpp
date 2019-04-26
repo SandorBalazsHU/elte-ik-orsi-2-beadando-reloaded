@@ -107,6 +107,7 @@ std::istream& operator>>(std::istream& s, Map& m)
 		}
 		m.map_.push_back(row);
 	}
+	m.find_cities();
 	return s;
 }
 
@@ -268,7 +269,11 @@ double Map::get_distance(const City& a, const City& b) const
 FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 {
 	std::pair<std::pair<City, City>, double> closest;
-	closest.second = 0.0;
+	double d = get_distance(cities[0], cities[1]);
+	closest.first.first = cities[0];
+	closest.first.second = cities[1];
+	closest.second = d;
+
 	for(size_t i = 0; i < cities.size(); i++)
 	{
 		for(size_t j = 0; j < cities.size(); j++)
@@ -276,7 +281,7 @@ FlightPath Map::closest_brute_force(const std::vector<City>& cities) const
 			if(i != j)
 			{
 				double d = get_distance(cities[i], cities[j]);
-				if(d >= closest.second)
+				if(d <= closest.second)
 				{
 					closest.first.first = cities[i];
 					closest.first.second = cities[j];
@@ -294,17 +299,22 @@ bool coordinate_y_order(const Coordinate& a, const Coordinate& b)
 	return a.y < b.y;
 }
 
-// TODO: Rendezés ellenőrzése
 FlightPath Map::get_shortest_flightpath() const
 {
 	std::vector<City> x,y;
 	std::copy(cities_.begin(), cities_.end(), std::back_inserter(x));
 	y=x;
 	std::sort(y.begin(), y.end(), coordinate_y_order);
-	return find_shortest(x,y);
+	FlightPath path = find_shortest(x,y);
+	if (path.second < path.first)
+	{
+		City first = path.first;
+		path.first = path.second;
+		path.second = first;
+	}
+	return path;
 }
 
-// TODO: Működés ellenőrzése
 FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vector<City>& y_cities) const
 {
 	if(x_cities.size() < 4) return closest_brute_force(x_cities);
@@ -313,7 +323,7 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 	std::size_t const left_shift = (x_cities.size() % 2 == 0) ? half_size-1 : half_size;
 	std::size_t const right_shift = (x_cities.size() % 2 == 0) ? half_size : (half_size-1);
 
-	std::vector<City> const on_left_x(x_cities.begin(), x_cities.begin() + half_size-1);
+	std::vector<City> const	on_left_x(x_cities.begin(), x_cities.begin() + half_size-1);
 	std::vector<City> const on_right_x(x_cities.begin() + half_size, x_cities.end());
 
 	City const middle_X = on_right_x[0];
@@ -362,6 +372,5 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 		}
 		
 	}
-	
 	return min_path;
 }

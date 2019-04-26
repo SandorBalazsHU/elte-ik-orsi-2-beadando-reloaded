@@ -5,7 +5,7 @@
 	git: https://github.com/SandorBalazsHU/elte-ik-orsi-2-beadando-reloaded (A határidő lejárta után lesz publikus)
 */
 
-//Run Kara Run
+//	Run Kara run
 
 #include <iostream>
 #include <fstream>
@@ -37,6 +37,7 @@ Mission::Mission(std::string input_file)
 	file >> n >> m;
 	map = Map(n, m);
 	file >> map;
+	//std::cout << map << std::endl;
 }
 
 void Mission::compute()
