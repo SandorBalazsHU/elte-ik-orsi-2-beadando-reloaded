@@ -341,8 +341,9 @@ FlightPath Map::find_shortest(const std::vector<City>& x_cities, const std::vect
 		}
 	}
 
-	FlightPath const path_a = find_shortest(on_left_x, on_left_y);
+	//Futási sorrend módosítva a javításhoz: (Előbb indítsd a path_b_future-hez tartozó folyamatot, utána számold ki a path_a -t, és csak ezt kövesse a path_b_future.get();)
 	std::future<FlightPath> path_b_future = std::async( std::launch::async, &Map::find_shortest, this, std::cref(on_right_x), std::cref(on_right_y) );
+	FlightPath const path_a = find_shortest(on_left_x, on_left_y);
 	FlightPath const path_b = path_b_future.get();
 
 	FlightPath min_path = (get_length(path_a) < get_length(path_b)) ? path_a : path_b;
